@@ -6,7 +6,10 @@ from sys import argv
 
 script, filename = argv
 
-
+def rando_choice(data_list):
+    num = random.randint(0, len(data_list) - 1)
+    choice = data_list[num]
+    return choice
 
 def make_chains(corpus):
     #takes an input text as a string and returns a dictionary of
@@ -40,16 +43,18 @@ def make_text(chains):
     key_list = chains.keys() #gets the key list from the dictionary
     
 
-    #looks for a key with first word capitalized, returns list of optional words to add
+    #randomly finds capitalized words in a key and uses that key to start chain.
+    capitalized_list = []
+
     for key in key_list:
-        if key[0].istitle():    #will cause it to always start with same key (last in list with capital)
-            start_key = key
-            options_list = chains[start_key]
-   
+        if key[0].istitle():
+            capitalized_list.append(key)
+            
+    start_key = rando_choice(capitalized_list)
+    options_list = chains[start_key]
+        
     #randomly picks option from list
-    
-    num = random.randint(0, len(options_list) - 1) 
-    chosen_option = options_list[num]
+    chosen_option = rando_choice(options_list)
 
     #start the chain
     markov_chain = str(start_key[0]) + " " + str(start_key[1]) + " " + chosen_option
@@ -64,9 +69,8 @@ def make_text(chains):
         if new_key in chains: #If new_key is in our dictionary, then get a new chosen_option
             options_list = chains[new_key]
 
-            num = random.randint(0, len(options_list) - 1) # generating random number to select chosen_option
-            chosen_option = options_list[num]
-            
+            chosen_option = rando_choice(options_list)
+
             markov_chain += " " + chosen_option # continues chain
 
             # checks if chosen option ends with punctuation, if yes three times, ends while loop
